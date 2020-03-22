@@ -1,3 +1,9 @@
+#apikeys
+source/localInformation
+ForFlexGet.txt
+loaded.json
+
+
 # Logs
 logs
 *.log

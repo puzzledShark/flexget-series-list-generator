@@ -10,6 +10,6 @@
   "author": "Kenny Nguyen <kenimorri@gmail.com>",
   "description": "flexget-series-list-generator",
   "devDependencies": {
-    "electron": "1.7.9"
+    "electron": "1.8.8"
   }
 }
