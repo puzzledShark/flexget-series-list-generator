@@ -205,8 +205,9 @@ var tvDBsearch = function(ijpnUrlList) {
         })
         .catch(error => { 
             //We'd want to query MAL here but I'll save that for later
-            console.log('Nothing Found');
-            console.log('Cannot find it so putting in fake info');
+			console.log('Nothing found?\n Error Response:');
+			console.log(error);
+			console.log('Cannot find it so putting in fake info');
             animeID.push('MISSING');
 			animePathName.push(ijpnUrlList[0]);
             ijpnUrlList.shift();
@@ -215,7 +216,7 @@ var tvDBsearch = function(ijpnUrlList) {
 
     }
 	else {
-        console.log('Packing');
+		console.log('Packing');
 		flexGetDataPacker();
 		if(myArgs[0] != "check") {
 			for(var i = 0; cloneNewAnime[i]; i++) {
@@ -259,10 +260,23 @@ var flexGetDataPacker = function() {
 //Parsing Arguments to see which version to run, needs to be down here to beat a race condition
 var myArgs = process.argv.slice(2);
 console.log('myArgs:' , myArgs);
-if(myArgs[0] == "check") {
-	loadCheckedAnime();
-}
-else {
-	loadAllAnime();
-}
+//If tvdb returns the error, then don't continue on obviously.
+tvdb.getSeriesByName('The Simpsons')
+    .then(response => { 
+		console.log("Normal Response");
+		console.log(response); 
+		if(myArgs[0] == "check") {
+			loadCheckedAnime();
+		}
+		else {
+			loadAllAnime();
+		}})
+    .catch(error => { 
+		console.log("Error Response");
+		console.log(error) });
+
+
+
+ 
+
 
