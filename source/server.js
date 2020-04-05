@@ -28,11 +28,11 @@ var season = [];
 
 //Tracks titles that have been loaded previously
 var previousAnimeLoaded;
+previousAnimeLoaded = require('../loaded.json')
 
 
 var loadAllAnime = function() {
 	console.log('Scafolding nightmare LAA');
-	previousAnimeLoaded = require('../loaded.json')
 	console.log(previousAnimeLoaded);
 
 	//Setting Values for Nightmare instance, since this run takes in all anime, it does not need to show it to the user for input
@@ -84,22 +84,42 @@ var loadCheckedAnime = function() {
 		.viewport(800, 1000)
 		.goto('https://horriblesubs.info/current-season/')
 		.wait('#main')
-		.evaluate(function() {
+		.evaluate(function(loaded) {
 			for(var i = 0; document.getElementsByClassName('ind-show')[i]; i++) {
+				if(loaded.find(function(element) 
+				{ 
+					//TLDR: If it finds it, skip to next
+					var retVal = false;
+					//If you click, it will open in new window to show preview
+					document.getElementsByClassName('shows-wrapper')[0].getElementsByTagName('a')[i].target = "_blank";
+					if(element == document.getElementsByClassName('shows-wrapper')[0].getElementsByTagName('a')[i].innerText) {
+						//document.getElementsByClassName('shows-wrapper')[0].getElementsByTagName('a')[i].innerText =  ">Added:" + document.getElementsByClassName('shows-wrapper')[0].getElementsByTagName('a')[i].innerText
+						document.getElementsByClassName('shows-wrapper')[0].getElementsByTagName('a')[i].style.textDecoration = "underline";
+						retVal = true;
+					}
+					return retVal;
+				})
+				)
+				{
+					//console.log('OLD');
+				}
+				else {
+					//If not in list do nothing
+				}
 				var tmp = document.createElement('input');
 				tmp.type = 'checkbox';
 				tmp.value = 'test';
 				tmp.className = 'checkboxVal';
 				document.getElementsByClassName('ind-show')[i].firstElementChild.prepend(tmp)
-			  }
-			  var button = document.createElement('button');
-			button.type="button";
+			}
+			  	var button = document.createElement('button');
+				button.type="button";
 				button.onclick = function() {
 				document.getElementsByClassName('entry-title')[0].id = 'nextStep';
 				}
 				button.innerText = 'Press this button when selection complete';
 				document.getElementsByClassName('entry-title')[0].append(button);
-		})
+		}, previousAnimeLoaded)
 		.wait('#nextStep')
 		.evaluate(function() {
 			//Below should only return what has a checkmark on it
@@ -204,7 +224,7 @@ var tvDBsearch = function(ijpnUrlList) {
                 tvDBsearch(ijpnUrlList);
         })
         .catch(error => { 
-			if(error['response'] == 404) {
+			if(error['response']['status'] == 404) {
 				//We'd want to query MAL here but I'll save that for later
 				console.log('Nothing found?\n Error Response:');
 				console.log(error);
@@ -214,13 +234,16 @@ var tvDBsearch = function(ijpnUrlList) {
 				ijpnUrlList.shift();
 				tvDBsearch(ijpnUrlList);
 			}
-			else if(error['response'] == 504) {
+			else if(error['response']['status'] == 504) {
 				console.log("Response 504, so waiting 10 seconds and trying tvdb again");
 				setTimeout(tvDBsearch(ijpnUrlList), 10000)
 			}
 			else {
 				console.log('Stall');
 				console.log(error);
+				console.log(error['response'])
+				console.log(error['response']['status'])
+				console.log(error['response']['statusText'])
 			}
 
             
@@ -230,19 +253,17 @@ var tvDBsearch = function(ijpnUrlList) {
 	else {
 		console.log('Packing');
 		flexGetDataPacker();
-		if(myArgs[0] != "check") {
-			for(var i = 0; cloneNewAnime[i]; i++) {
-				if(season[i] != '1') {
-					previousAnimeLoaded.push(cloneNewAnime[i] + ' S' + season[i]);
-				}
-				else {
-					previousAnimeLoaded.push(cloneNewAnime[i]);
-				}
+		for(var i = 0; cloneNewAnime[i]; i++) {
+			if(season[i] != '1') {
+				previousAnimeLoaded.push(cloneNewAnime[i] + ' S' + season[i]);
 			}
-			Log.initOverrideV2('./', 'loaded.json')
-			Log.data('', previousAnimeLoaded);
-			Log.fixData();
+			else {
+				previousAnimeLoaded.push(cloneNewAnime[i]);
+			}
 		}
+		Log.initOverrideV2('./', 'loaded.json')
+		Log.data('', previousAnimeLoaded);
+		Log.fixData();
 		console.log('Execution is complete');
 	}
 }
