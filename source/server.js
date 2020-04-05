@@ -204,14 +204,26 @@ var tvDBsearch = function(ijpnUrlList) {
                 tvDBsearch(ijpnUrlList);
         })
         .catch(error => { 
-            //We'd want to query MAL here but I'll save that for later
-			console.log('Nothing found?\n Error Response:');
-			console.log(error);
-			console.log('Cannot find it so putting in fake info');
-            animeID.push('MISSING');
-			animePathName.push(ijpnUrlList[0]);
-            ijpnUrlList.shift();
-            tvDBsearch(ijpnUrlList);
+			if(error['response'] == 404) {
+				//We'd want to query MAL here but I'll save that for later
+				console.log('Nothing found?\n Error Response:');
+				console.log(error);
+				console.log('Cannot find it so putting in fake info');
+				animeID.push('MISSING');
+				animePathName.push(ijpnUrlList[0]);
+				ijpnUrlList.shift();
+				tvDBsearch(ijpnUrlList);
+			}
+			else if(error['response'] == 504) {
+				console.log("Response 504, so waiting 10 seconds and trying tvdb again");
+				setTimeout(tvDBsearch(ijpnUrlList), 10000)
+			}
+			else {
+				console.log('Stall');
+				console.log(error);
+			}
+
+            
         });
 
     }
@@ -244,10 +256,18 @@ var flexGetDataPacker = function() {
 		if(animeID[i] == 'MISSING') {
 			Log.print('>-------------------------WARNING BELOW--------------------<\n');
 		}
-		Log.print('      - ' + cloneNewAnime[i] + ':\n');
+		Log.print('      - ' + cloneNewAnime[i]);
+		if(season[i] != '1') {
+			Log.print(' S' + season[i]);
+		}
+		Log.print(':\n');
 		Log.print('          set:\n');
         Log.print('            path:  ' + savePath + '' + animePathName[i] + '/Season ' + season[i]);
-        Log.print('\n');
+		Log.print('\n');
+		if(parseInt(season[i]) >= 3) {
+			Log.print('          season_packs: yes\n');
+			Log.print('          tracking: no\n');
+		}
 		if(animeID[i] == 'MISSING') {
 			Log.print('>-------------------------WARNING ABOVE--------------------<\n');
 		}
@@ -260,20 +280,12 @@ var flexGetDataPacker = function() {
 //Parsing Arguments to see which version to run, needs to be down here to beat a race condition
 var myArgs = process.argv.slice(2);
 console.log('myArgs:' , myArgs);
-//If tvdb returns the error, then don't continue on obviously.
-tvdb.getSeriesByName('The Simpsons')
-    .then(response => { 
-		console.log("Normal Response");
-		console.log(response); 
-		if(myArgs[0] == "check") {
-			loadCheckedAnime();
-		}
-		else {
-			loadAllAnime();
-		}})
-    .catch(error => { 
-		console.log("Error Response");
-		console.log(error) });
+if(myArgs[0] == "check") {
+	loadCheckedAnime();
+}
+else {
+	loadAllAnime();
+}
 
 
 
