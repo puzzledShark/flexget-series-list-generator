@@ -78,10 +78,7 @@ var loadCheckedAnime = function() {
 		y: 10,
 		icon: './Utility/icon.png',
 		autoHideMenuBar: true,
-		waitTimeout: 120000,
-		openDevTools: {
-			mode: 'detach'
-		  }
+		waitTimeout: 120000
 	})
 	GUI
 		.viewport(800, 1000)
@@ -284,7 +281,7 @@ var flexGetDataPacker = function() {
 		if(animeID[i] == 'MISSING') {
 			Log.print('>-------------------------WARNING BELOW--------------------<\n');
 		}
-		Log.print('      - ' + cloneNewAnime[i]);
+		Log.print("      - '" + cloneNewAnime[i] +"'");
 		if(season[i] != '1') {
 			Log.print(' S' + season[i]);
 		}
