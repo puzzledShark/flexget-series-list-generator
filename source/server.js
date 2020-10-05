@@ -48,13 +48,13 @@ var loadAllAnime = function() {
 	})
 	GUI
 		.viewport(800, 1000)
-		.goto('https://horriblesubs.info/current-season/')
+		.goto('https://www.erai-raws.info/schedule/')
 		.wait('#main')
 		.evaluate(function() {
-			var showlist = document.getElementsByClassName('shows-wrapper')[0].getElementsByTagName('a');
+			var showlist = document.getElementsByClassName('cccccc');
 			var showlisttext = [];
 			for(var i = 0; showlist[i]; i++) {
-				showlisttext.push(showlist[i].innerText)
+				showlisttext.push(showlist[i].nextElementSibling.innerText)
 			}
 			return showlisttext;
 		})
@@ -78,16 +78,21 @@ var loadCheckedAnime = function() {
 		y: 10,
 		icon: './Utility/icon.png',
 		autoHideMenuBar: true,
-		waitTimeout: 120000
+		waitTimeout: 120000,
+		openDevTools: {
+			mode: 'detach'
+		  }
 	})
 	GUI
 		.viewport(800, 1000)
-		.goto('https://horriblesubs.info/current-season/')
+		.goto('https://www.erai-raws.info/schedule/')
 		.wait('#main')
 		.evaluate(function(loaded) {
-			for(var i = 0; document.getElementsByClassName('ind-show')[i]; i++) {
+			
+			for(var i = 0; document.getElementsByClassName('cccccc')[i]; i++) {
+				/* 
 				if(loaded.find(function(element) 
-				{ 
+				{
 					//TLDR: If it finds it, skip to next
 					var retVal = false;
 					//If you click, it will open in new window to show preview
@@ -106,11 +111,12 @@ var loadCheckedAnime = function() {
 				else {
 					//If not in list do nothing
 				}
+				*/
 				var tmp = document.createElement('input');
 				tmp.type = 'checkbox';
 				tmp.value = 'test';
 				tmp.className = 'checkboxVal';
-				document.getElementsByClassName('ind-show')[i].firstElementChild.prepend(tmp)
+				document.getElementsByClassName('cccccc')[i].prepend(tmp)
 			}
 			  	var button = document.createElement('button');
 				button.type="button";
@@ -123,12 +129,13 @@ var loadCheckedAnime = function() {
 		.wait('#nextStep')
 		.evaluate(function() {
 			//Below should only return what has a checkmark on it
-			var showlist = document.getElementsByClassName('shows-wrapper')[0].getElementsByTagName('a');
+			var showlist = document.getElementsByClassName('cccccc');
 			var showlistChecked = document.getElementsByClassName('checkboxVal');
 			var showlisttext = [];
 			for(var i = 0; showlist[i]; i++) {
 				if(showlistChecked[i].checked) {
-					showlisttext.push(showlist[i].innerText)
+					//showlisttext.push(showlist[i].innerText)
+					showlisttext.push(showlist[i].nextElementSibling.innerText)
 				}
 			}
 			return showlisttext;
