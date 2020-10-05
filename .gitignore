@@ -108,3 +108,7 @@ dist
 
 # TernJS port file
 .tern-port
+source/localInformation/tvdbkey.js
+source/localInformation/savePath.js
+loaded.json
+ForFlexGet.txt
