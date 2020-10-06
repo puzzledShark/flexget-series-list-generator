@@ -62,16 +62,43 @@ function dataObject(title, input, spacing) {
 	}
 }
 
+function readLoaded(callback) {
+	fs.readFile('./loaded.json', 'utf-8', (err, data) => {
+		if(err) {
+			throw err;
+		}
+		console.log(JSON.parse(data.toString()))
+		callback(JSON.parse(data.toString()))
+	})
+}
+
+function writeLoaded(input) {
+	input = JSON.stringify(input);
+	fs.writeFileSync('./loaded.json', input, (err) => {
+		if (err) {
+			throw err;
+		}
+	})
+}
+
+//Depreciated
 function fixDataObject() {
 	fs.readFile('./loaded.json', 'utf8', function (err,data) {
 		if (err) {
 		  return console.log(err);
 		}
-		var result = data.replace(/'/g, '"');
-	  
+		//var result = data.replace(/'/g, '"');
+		var result = JSON.stringify(data);
+		/*
 		fs.writeFile('./loaded.json', result, 'utf8', function (err) {
 		   if (err) return console.log(err);
 		});
+		*/
+		fs.writeFile('./loaded.json', result, (err) => {
+			if (err) {
+				throw err;
+			}
+		})
 	  });
 }
 
@@ -85,5 +112,7 @@ exports.data = dataObject;
 exports.fixData = fixDataObject;
 exports.initBasic = initBasic;
 exports.initBasicV2 = initBasicV2;
+exports.readLoaded = readLoaded;
+exports.writeLoaded = writeLoaded;
 
 

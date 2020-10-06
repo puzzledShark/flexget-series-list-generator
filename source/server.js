@@ -1,5 +1,3 @@
-
-
 var Nightmare = require('nightmare');
 const TVDB = require('node-tvdb');
 const tvdbkey = require('./localInformation/tvdbkey').key;
@@ -24,11 +22,14 @@ var newAnime = [];
 var cloneNewAnime = [];
 //Matched length with newAnime/cloneNewAnime, honestly just a really lazy implementation
 var season = [];
-
-
 //Tracks titles that have been loaded previously
 var previousAnimeLoaded;
-previousAnimeLoaded = require('../loaded.json')
+
+
+
+
+
+
 
 
 var loadAllAnime = function() {
@@ -213,7 +214,7 @@ var tvDBsearch = function(ijpnUrlList) {
 
 
 	if(ijpnUrlList[0]) {
-		console.log('\tCurrent Title:' + ijpnUrlList[0]);
+		console.log('\n\tCurrent Title:' + ijpnUrlList[0]);
 		console.log('Current queue:' + ijpnUrlList.length);
         
         tvdb.getSeriesByName(ijpnUrlList[0])
@@ -265,9 +266,10 @@ var tvDBsearch = function(ijpnUrlList) {
 				previousAnimeLoaded.push(cloneNewAnime[i]);
 			}
 		}
-		Log.initOverrideV2('./', 'loaded.json')
-		Log.data('', previousAnimeLoaded);
-		Log.fixData();
+		//Log.initOverrideV2('./', 'loaded.json')
+		Log.writeLoaded(previousAnimeLoaded);
+		//Log.data('', previousAnimeLoaded);
+		//Log.fixData();
 		console.log('Execution is complete');
 	}
 }
@@ -299,18 +301,24 @@ var flexGetDataPacker = function() {
 	}
 }
 
-
-
-
-//Parsing Arguments to see which version to run, needs to be down here to beat a race condition
 var myArgs = process.argv.slice(2);
-console.log('myArgs:' , myArgs);
-if(myArgs[0] == "check") {
-	loadCheckedAnime();
+//Parsing Arguments to see which version to run, needs to be down here to beat a race condition
+function parseArgs(input) {
+	previousAnimeLoaded = input;
+	console.log(previousAnimeLoaded[0]);
+	console.log('myArgs:' , myArgs);
+	if(myArgs[0] == "check") {
+		loadCheckedAnime();
+	}
+	else {
+		loadAllAnime();
+	}
+	
 }
-else {
-	loadAllAnime();
-}
+
+Log.readLoaded(parseArgs);
+
+
 
 
 
