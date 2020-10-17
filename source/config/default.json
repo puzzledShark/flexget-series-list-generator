@@ -1,0 +1,15 @@
+{
+    "domain" : [
+        {
+            "name": "EraiRaws",
+            "url" : "https://www.erai-raws.info/schedule/"
+        }
+    ],
+    "savePath" : "W:\\Video\\Anime [Current]",
+    "key" : [
+        {
+            "name" : "tvdb",
+            "value" : "AE3170C9526ED7FE"
+        }
+    ]
+}
