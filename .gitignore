@@ -112,3 +112,5 @@ source/localInformation/tvdbkey.js
 source/localInformation/savePath.js
 loaded.json
 ForFlexGet.txt
+/.vscode
+/.vs

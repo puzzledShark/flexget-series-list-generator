@@ -31,7 +31,6 @@ function loadAllAnime() {
 	var domainGroup: erairaws = new erairaws(true);
 	parser = new tvdbParser(true);
 
-	//Setting Values for Nightmare instance, since this run takes in all anime, it does not need to show it to the user for input
 	let nightmareInstance = Nightmare(nightmareConfig);
 	nightmareInstance = nightmareInstance.viewport(800, 1000);
 
