@@ -4,7 +4,6 @@
   "dependencies": {
     "alert-node": "latest",
     "nightmare": "latest",
-    "node-tvdb": "^4.1.0",
     "sanitize-filename": "^1.6.3"
   },
   "author": "Kenny Nguyen <kenimorri@gmail.com>",
