@@ -1,5 +1,3 @@
-
-
 var Nightmare = require('nightmare');
 const TVDB = require('node-tvdb');
 const tvdbkey = require('./localInformation/tvdbkey').key;
@@ -24,11 +22,14 @@ var newAnime = [];
 var cloneNewAnime = [];
 //Matched length with newAnime/cloneNewAnime, honestly just a really lazy implementation
 var season = [];
-
-
 //Tracks titles that have been loaded previously
 var previousAnimeLoaded;
-previousAnimeLoaded = require('../loaded.json')
+
+
+
+
+
+
 
 
 var loadAllAnime = function() {
@@ -48,13 +49,13 @@ var loadAllAnime = function() {
 	})
 	GUI
 		.viewport(800, 1000)
-		.goto('https://horriblesubs.info/current-season/')
+		.goto('https://www.erai-raws.info/schedule/')
 		.wait('#main')
 		.evaluate(function() {
-			var showlist = document.getElementsByClassName('shows-wrapper')[0].getElementsByTagName('a');
+			var showlist = document.getElementsByClassName('cccccc');
 			var showlisttext = [];
 			for(var i = 0; showlist[i]; i++) {
-				showlisttext.push(showlist[i].innerText)
+				showlisttext.push(showlist[i].nextElementSibling.innerText)
 			}
 			return showlisttext;
 		})
@@ -82,12 +83,14 @@ var loadCheckedAnime = function() {
 	})
 	GUI
 		.viewport(800, 1000)
-		.goto('https://horriblesubs.info/current-season/')
+		.goto('https://www.erai-raws.info/schedule/')
 		.wait('#main')
 		.evaluate(function(loaded) {
-			for(var i = 0; document.getElementsByClassName('ind-show')[i]; i++) {
+			
+			for(var i = 0; document.getElementsByClassName('cccccc')[i]; i++) {
+				/* 
 				if(loaded.find(function(element) 
-				{ 
+				{
 					//TLDR: If it finds it, skip to next
 					var retVal = false;
 					//If you click, it will open in new window to show preview
@@ -106,11 +109,12 @@ var loadCheckedAnime = function() {
 				else {
 					//If not in list do nothing
 				}
+				*/
 				var tmp = document.createElement('input');
 				tmp.type = 'checkbox';
 				tmp.value = 'test';
 				tmp.className = 'checkboxVal';
-				document.getElementsByClassName('ind-show')[i].firstElementChild.prepend(tmp)
+				document.getElementsByClassName('cccccc')[i].prepend(tmp)
 			}
 			  	var button = document.createElement('button');
 				button.type="button";
@@ -123,12 +127,13 @@ var loadCheckedAnime = function() {
 		.wait('#nextStep')
 		.evaluate(function() {
 			//Below should only return what has a checkmark on it
-			var showlist = document.getElementsByClassName('shows-wrapper')[0].getElementsByTagName('a');
+			var showlist = document.getElementsByClassName('cccccc');
 			var showlistChecked = document.getElementsByClassName('checkboxVal');
 			var showlisttext = [];
 			for(var i = 0; showlist[i]; i++) {
 				if(showlistChecked[i].checked) {
-					showlisttext.push(showlist[i].innerText)
+					//showlisttext.push(showlist[i].innerText)
+					showlisttext.push(showlist[i].nextElementSibling.innerText)
 				}
 			}
 			return showlisttext;
@@ -209,7 +214,7 @@ var tvDBsearch = function(ijpnUrlList) {
 
 
 	if(ijpnUrlList[0]) {
-		console.log('\tCurrent Title:' + ijpnUrlList[0]);
+		console.log('\n\tCurrent Title:' + ijpnUrlList[0]);
 		console.log('Current queue:' + ijpnUrlList.length);
         
         tvdb.getSeriesByName(ijpnUrlList[0])
@@ -261,9 +266,10 @@ var tvDBsearch = function(ijpnUrlList) {
 				previousAnimeLoaded.push(cloneNewAnime[i]);
 			}
 		}
-		Log.initOverrideV2('./', 'loaded.json')
-		Log.data('', previousAnimeLoaded);
-		Log.fixData();
+		//Log.initOverrideV2('./', 'loaded.json')
+		Log.writeLoaded(previousAnimeLoaded);
+		//Log.data('', previousAnimeLoaded);
+		//Log.fixData();
 		console.log('Execution is complete');
 	}
 }
@@ -277,7 +283,7 @@ var flexGetDataPacker = function() {
 		if(animeID[i] == 'MISSING') {
 			Log.print('>-------------------------WARNING BELOW--------------------<\n');
 		}
-		Log.print('      - ' + cloneNewAnime[i]);
+		Log.print("      - '" + cloneNewAnime[i] +"'");
 		if(season[i] != '1') {
 			Log.print(' S' + season[i]);
 		}
@@ -295,18 +301,24 @@ var flexGetDataPacker = function() {
 	}
 }
 
-
-
-
-//Parsing Arguments to see which version to run, needs to be down here to beat a race condition
 var myArgs = process.argv.slice(2);
-console.log('myArgs:' , myArgs);
-if(myArgs[0] == "check") {
-	loadCheckedAnime();
+//Parsing Arguments to see which version to run, needs to be down here to beat a race condition
+function parseArgs(input) {
+	previousAnimeLoaded = input;
+	console.log(previousAnimeLoaded[0]);
+	console.log('myArgs:' , myArgs);
+	if(myArgs[0] == "check") {
+		loadCheckedAnime();
+	}
+	else {
+		loadAllAnime();
+	}
+	
 }
-else {
-	loadAllAnime();
-}
+
+Log.readLoaded(parseArgs);
+
+
 
 
 
