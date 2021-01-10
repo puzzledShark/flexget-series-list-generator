@@ -1,8 +1,5 @@
 var Nightmare = require('nightmare');
-const TVDB = require('node-tvdb');
-const tvdbkey = require('./localInformation/tvdbkey').key;
 const savePath = require('./localInformation/savePath').path;
-const tvdb = new TVDB(tvdbkey);
 var sanitize = require("sanitize-filename");
 
 
@@ -24,12 +21,8 @@ var cloneNewAnime = [];
 var season = [];
 //Tracks titles that have been loaded previously
 var previousAnimeLoaded;
-
-
-
-
-
-
+//Making this global because I'm too lazy to pass it along for thetvdbnightmaresearch
+var GUI;
 
 
 var loadAllAnime = function() {
@@ -37,7 +30,7 @@ var loadAllAnime = function() {
 	console.log(previousAnimeLoaded);
 
 	//Setting Values for Nightmare instance, since this run takes in all anime, it does not need to show it to the user for input
-	var GUI = Nightmare({
+	GUI = Nightmare({
 		show: false,
 		typeInterval: 20,
 		alwaysOnTop: false,
@@ -70,7 +63,7 @@ var loadAllAnime = function() {
 
 var loadCheckedAnime = function() {
 	console.log('Scafolding nightmare');
-	var GUI = Nightmare({
+	GUI = Nightmare({
 		show: true,
 		typeInterval: 20,
 		alwaysOnTop: false,
@@ -199,7 +192,7 @@ var parseLoadedAnime = function(list) {
 		for(var i = 0; newAnime[i]; i++) {
 			cloneNewAnime.push(newAnime[i]);
 		}
-		tvDBsearch(newAnime);
+		tvDBNightmareSearch(newAnime);
 	}
 	else {
 		console.log('No New Anime')
@@ -208,53 +201,49 @@ var parseLoadedAnime = function(list) {
 
 }
 
-
-
-var tvDBsearch = function(ijpnUrlList) {
-
-
+var tvDBNightmareSearch = function(ijpnUrlList) {
 	if(ijpnUrlList[0]) {
-		console.log('\n\tCurrent Title:' + ijpnUrlList[0]);
-		console.log('Current queue:' + ijpnUrlList.length);
-        
-        tvdb.getSeriesByName(ijpnUrlList[0])
-        .then(response => { 
-                console.log('Anime ID:');
-                console.log(response[0]['id']);
-                console.log('Anime Name:');
-                console.log(response[0]['seriesName']);
-                animeID.push(response[0]['id']);
-				animePathName.push( sanitize(response[0]['seriesName']))
-                ijpnUrlList.shift();
-                tvDBsearch(ijpnUrlList);
-        })
-        .catch(error => { 
-			if(error['response']['status'] == 404) {
+		GUI
+		.viewport(800, 1000)
+		.goto('https://thetvdb.com/search?menu%5Btype%5D=TV&query=' + encodeURI(ijpnUrlList[0]) )
+		.wait('div#searchbox')
+		.wait(1000)
+		.evaluate(function() {
+			var retval = [];
+			if(document.getElementsByTagName("ol")[0]) {
+				retval[0] = document.getElementsByClassName("mt-1")[0].getElementsByTagName("small")[0].innerText.split("#")[1];
+				retval[1] = document.getElementsByClassName("media-heading")[0].getElementsByTagName("a")[0].innerText;
+				return retval;
+			}
+			else return -1;
+			
+		})
+		.then(function(list) {
+			if(list != -1) {
+				console.log('Anime ID:');
+				console.log(list[0]);
+				console.log('Anime Name:');
+				console.log(list[1]);
+				animeID.push(list[0]);
+				animePathName.push( sanitize(list[1]))
+				
+				ijpnUrlList.shift();
+				tvDBNightmareSearch(ijpnUrlList);
+			}
+			else {
 				//We'd want to query MAL here but I'll save that for later
-				console.log('Nothing found?\n Error Response:');
-				console.log(error);
+				console.log('Nothing Found');
 				console.log('Cannot find it so putting in fake info');
 				animeID.push('MISSING');
 				animePathName.push(ijpnUrlList[0]);
 				ijpnUrlList.shift();
-				tvDBsearch(ijpnUrlList);
+				tvDBNightmareSearch(ijpnUrlList);
 			}
-			else if(error['response']['status'] == 504) {
-				console.log("Response 504, so waiting 10 seconds and trying tvdb again");
-				setTimeout(tvDBsearch(ijpnUrlList), 10000)
-			}
-			else {
-				console.log('Stall');
-				console.log(error);
-				console.log(error['response'])
-				console.log(error['response']['status'])
-				console.log(error['response']['statusText'])
-			}
-
-            
-        });
-
-    }
+		})
+		.catch(function (error) {
+			console.error('firstLogin failed due to: ', error);
+		})
+	}
 	else {
 		console.log('Packing');
 		flexGetDataPacker();
@@ -317,11 +306,3 @@ function parseArgs(input) {
 }
 
 Log.readLoaded(parseArgs);
-
-
-
-
-
- 
-
-
