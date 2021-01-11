@@ -6,26 +6,15 @@ import * as translation from '../resources/en.json';
 
 class erairaws extends domain {
     constructor(getAll: boolean, debugMode?: boolean) {
-        super();
+        super(getAll, debugMode);
         const domain = config.domain.find((obj) => {
             return obj.name === "EraiRaws";
         });
 
         if(domain)
             this.url = domain.url;
-        
-        if(getAll)
-            this.getAll = true;
-        
-        if(debugMode)
-            this.debugMode = true;
-        
     }
 
-    /**
-     * render
-     * nightmare: Nightmare     
-     * */
     public render(nightmare: nightmare, callback?: any) {
         let showList: HTMLCollectionOf<Element> = undefined;
         const showListText: string[] = [];
@@ -80,13 +69,6 @@ class erairaws extends domain {
                     return showListText;
                 }));
         }
-    }
-
-    /**
-     * getTitle
-     */
-    public getTitle() {
-        
     }
 }
 

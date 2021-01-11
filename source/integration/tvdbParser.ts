@@ -1,4 +1,4 @@
-import { sanitize } from 'sanitize-filename-ts';
+//TODO import { sanitize } from 'sanitize-filename-ts';
 import parser from './parser';
 import { show, tvdbResponse } from '../interfaces/show';
 import responseError from '../interfaces/response-error';
@@ -7,23 +7,17 @@ import * as config from '../config/default.json';
 
 const tvdb = require('node-tvdb');
 
-class tvdbParser implements parser {
-    debugMode: boolean = false;
-    titles: show[] = [];
+class tvdbParser extends parser {
     tvdbInstance: typeof tvdb = undefined;
-    callbackClass?: parser;
 
     constructor(debugMode?: boolean, callbackClass?: parser) {
+        super(debugMode, callbackClass);
+
         const tvdbkey = config.key.find((obj) => {
             return obj.name === "tvdb";
         }).value;
 
-        if(debugMode) {
-            this.debugMode = true;
-        }
         this.tvdbInstance = new tvdb(tvdbkey);
-        if(callbackClass)
-            this.callbackClass = callbackClass;
     }
     
     public async process(list: string[], getAll: boolean, old: string[], callback: () => void) {
@@ -99,30 +93,6 @@ class tvdbParser implements parser {
         
     }
 
-    public search(callback: () => void) {
-        if(this.debugMode) {
-            console.log('Current queue:' + this.titles.length);
-        }
-
-        Promise.all(this.titles.map((title) => {
-            return this.searchTitle(title);
-        })).then(() => {
-            callback();
-        });
-    }
-
-    private async searchTitle(title) {
-        const result = await this.getTitle(title.name);
-        
-        if(result) {
-            title.pathName = sanitize(result.seriesName);
-            title.tvdbResponse = {
-                id: result.id,
-                seriesName: result.seriesName
-            };
-        }
-    }
-
     public async getTitle(title: string) {
         return this.tvdbInstance.getSeriesByName(title)
         .then((response: tvdbResponse[]) => {
@@ -143,7 +113,7 @@ class tvdbParser implements parser {
                     console.log('Cannot find it so putting in fake info');
                 } else if (error.response.status === 504) {
                     console.log("Response 504, so waiting 10 seconds and trying tvdb again");
-                    return setTimeout(() => this.getTitle(title), 10000);
+                    return setTimeout(async () => await this.getTitle(title), 10000);
                 } else {
                     console.log('Stall');
                     console.log(error.response);

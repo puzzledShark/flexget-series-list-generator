@@ -5,6 +5,9 @@ import erairaws from './domain/eraiRaws';
 import tvdbParser from './integration/tvdbParser';
 
 import * as config from './config/default.json';
+import tvdbnightmare from './integration/tvdbnightmare';
+import parser from './integration/parser';
+import { nightmareConfig } from './interfaces/nightmare-interfaces';
 
 //Honestly.... this is barely useful but I'm too lazy to fix it
 var animeID = [];
@@ -17,27 +20,29 @@ var season = [];
 //Tracks titles that have been loaded previously
 var previousAnimeLoaded;
 
-let parser: tvdbParser = undefined;
-const nightmareConfig = {
+let commonParser: parser = undefined;
+const nightConfig: nightmareConfig = {
 	show: false,
 	typeInterval: 20,
 	x: 100,
 	y: 10
 };
 
-function loadAllAnime() {
-	console.log("Started Flexget Generator");
+function loadAllAnime(debugMode: boolean) {
+	var domainGroup: erairaws = new erairaws(true, debugMode);
 
-	var domainGroup: erairaws = new erairaws(true);
-	parser = new tvdbParser(true);
+	let nightmareDomain = Nightmare(nightConfig);
+	nightmareDomain = nightmareDomain.viewport(800, 1000);
 
-	let nightmareInstance = Nightmare(nightmareConfig);
-	nightmareInstance = nightmareInstance.viewport(800, 1000);
+	let nightmareIntegration = Nightmare(nightConfig);
+	nightmareIntegration = nightmareIntegration.viewport(800, 1000);
 
-	domainGroup.render(nightmareInstance, previousAnimeLoaded)
+	commonParser = new tvdbnightmare(debugMode, nightmareIntegration);
+
+	domainGroup.render(nightmareDomain, previousAnimeLoaded)
 		.then(async (list: string[]) => {
 			console.log("Render Callback", list);
-			parser.process(list, true, previousAnimeLoaded, pack);
+			commonParser.process(list, debugMode, previousAnimeLoaded, pack);
 		})
 		.catch((error) => {
 			console.error('firstLogin failed due to: ', error);
@@ -47,24 +52,24 @@ function loadAllAnime() {
 function pack() {
 	console.log('Packing...');
 	flexGetDataPacker();
-	console.log(parser.titles);
+	console.log(commonParser.titles);
 
-	Log.writeLoaded(parser.titles);
+	Log.writeLoaded(commonParser.titles);
 	console.log('Execution is complete');
 }
 
-var loadCheckedAnime = function() {
+var loadCheckedAnime = function(debugMode: boolean) {
 	console.log("Started Flexget Generator");
 
-	let nightmareInstance = Nightmare({ ...nightmareConfig, waitTimeout: 120000 });
+	let nightmareInstance = Nightmare({ ...nightConfig, waitTimeout: 120000 });
 	nightmareInstance = nightmareInstance.viewport(800, 1000);
-	const parser = new tvdbParser(true);
+	commonParser = new tvdbParser(debugMode);
 
-	var domainGroup: erairaws = new erairaws(false);
+	var domainGroup: erairaws = new erairaws(false, debugMode);
 	domainGroup.render(nightmareInstance, previousAnimeLoaded)
 		.then((list: string[]) => {
 			console.log(list);
-			parser.process(list, true, previousAnimeLoaded, 
+			commonParser.process(list, true, previousAnimeLoaded, 
 				() => {
 					console.log('Packing...');
 					flexGetDataPacker();
@@ -120,14 +125,15 @@ function flexGetDataPacker() {
 var myArgs = process.argv.slice(2);
 //Parsing Arguments to see which version to run, needs to be down here to beat a race condition
 function parseArgs(input) {
+	const debugMode = true;
+
 	previousAnimeLoaded = input;
 	if(myArgs[0] === "check") {
-		loadCheckedAnime();
+		loadCheckedAnime(debugMode);
 	}
 	else {
-		loadAllAnime();
+		loadAllAnime(debugMode);
 	}
-	
 }
 
 Log.readLoaded(parseArgs);

@@ -4,12 +4,11 @@
   "dependencies": {
     "alert-node": "latest",
     "nightmare": "latest",
-    "node-tvdb": "^4.1.0",
     "sanitize-filename": "^1.6.3"
   },
   "author": "Kenny Nguyen <kenimorri@gmail.com>",
   "description": "flexget-series-list-generator",
   "devDependencies": {
-    "electron": "1.8.8"
+    "electron": "9.1.0"
   }
 }
