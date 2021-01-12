@@ -6,7 +6,16 @@
     "nightmare": "latest",
     "sanitize-filename": "^1.6.3"
   },
-  "author": "Kenny Nguyen <kenimorri@gmail.com>",
+  "contributors": [
+    {
+      "name": "Kenny Nguyen",
+      "email": "kenimorri@gmail.com"
+    },
+    {
+      "name": "Jan Gabriel Ona",
+      "email": "jan.gabriel.ona@gmail.com"
+    }
+  ],
   "description": "flexget-series-list-generator",
   "devDependencies": {
     "electron": "9.1.0"

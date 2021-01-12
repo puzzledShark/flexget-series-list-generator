@@ -5,22 +5,19 @@ import * as config from '../config/default.json';
 import * as translation from '../resources/en.json';
 
 class erairaws extends domain {
-    constructor(getAll: boolean, debugMode?: boolean) {
-        super(getAll, debugMode);
-        const domain = config.domain.find((obj) => {
-            return obj.name === "EraiRaws";
-        });
+    url = "https://www.erai-raws.info/schedule/";
 
-        if(domain)
-            this.url = domain.url;
+    constructor(getAll?: boolean, debugMode?: boolean) {
+        super(getAll, debugMode);
     }
 
-    public render(nightmare: nightmare, callback?: any) {
+    public render(nightmare: nightmare) {
         let showList: HTMLCollectionOf<Element> = undefined;
         const showListText: string[] = [];
 
         if(this.getAll) {
             return (nightmare
+                .viewport(800, 1000)
                 .goto(this.url)
                 .wait('#main')
                 .evaluate(() => {
@@ -53,7 +50,7 @@ class erairaws extends domain {
                     button.onclick = function() {
                         document.getElementsByClassName('entry-title')[0].id = 'nextStep';
                     }
-                    button.innerText = "Press this button when selection is complete";
+                    button.innerText = translation.buttonSelectionText;
                     document.getElementsByClassName('entry-title')[0].append(button);
                 })
                 .wait('#nextStep')

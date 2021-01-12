@@ -1,11 +1,13 @@
 {
-    "domain" : [
+    "profiles": [
         {
-            "name": "EraiRaws",
-            "url" : "https://www.erai-raws.info/schedule/"
+            "flexgetSavePath" : "W:\\Video\\Anime [Current]",
+            "appConfig": {    
+                "oldOutput": "./loaded.json",
+                "fileNameOutput": "ForFlexGet.txt"
+            }
         }
     ],
-    "savePath" : "W:\\Video\\Anime [Current]",
     "key" : [
         {
             "name" : "tvdb",

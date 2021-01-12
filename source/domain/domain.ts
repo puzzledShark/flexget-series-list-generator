@@ -7,14 +7,16 @@ class domain {
     debugMode: boolean = false;
     getAll: boolean = false;
 
-    constructor(getAll: boolean, debugMode?: boolean) {
+    constructor(getAll?: boolean, debugMode?: boolean) {
         this.getAll = getAll;
         this.debugMode = debugMode;
     }
 
-    public render(nightmare: nightmare) {
-        throw new Error("Not Implemented");
-
+    /**
+     * 
+     * @param nightmare 
+     */
+    render(nightmare: nightmare) {
         return nightmare;
     }
 }

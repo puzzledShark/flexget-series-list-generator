@@ -1,13 +1,13 @@
 interface show {
-    name: string;
+    domainName: string;
     season: number;
     pathName?: string;
-    tvdbResponse?: tvdbResponse;
+    response?: parserResponse;
 }
 
-interface tvdbResponse {
+interface parserResponse {
     id: string | undefined;
-    seriesName: string;
+    title: string;
 }
 
-export { tvdbResponse, show };
+export { parserResponse, show };

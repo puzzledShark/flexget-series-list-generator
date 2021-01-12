@@ -1,12 +1,16 @@
 //TODO import { sanitize } from 'sanitize-filename-ts';
 import parser from './parser';
-import { show, tvdbResponse } from '../interfaces/show';
+import { show, parserResponse } from '../interfaces/show';
 import responseError from '../interfaces/response-error';
 
 import * as config from '../config/default.json';
+import { tvdbResponse } from '../interfaces/tvdb-interfaces';
 
 const tvdb = require('node-tvdb');
 
+/**
+ * @deprecated Parser class that is set to use tvdb's official API. No longer maintained
+ */
 class tvdbParser extends parser {
     tvdbInstance: typeof tvdb = undefined;
 
@@ -18,79 +22,6 @@ class tvdbParser extends parser {
         }).value;
 
         this.tvdbInstance = new tvdb(tvdbkey);
-    }
-    
-    public async process(list: string[], getAll: boolean, old: string[], callback: () => void) {
-        this.parse(list, getAll, old);
-
-        if(this.titles.length > 0) {
-            if(this.debugMode) {
-                console.log('Parsing:');
-                console.log(this.titles);
-            }
-            
-            this.search(callback);
-        } else if(this.debugMode) {
-            console.log('No New Anime');
-        }
-
-        return false;
-    }
-
-    /**
-     * Basically parses the information for TVDB API
-     */
-    public parse(list: string[], getAll: boolean, old: string[]) {
-        console.log('this.titles');
-        console.log(list);
-
-        if(getAll === false) {
-            console.log('Duplication Check');
-
-            //Below does a comparison between old searches with the newest search so we only search for new animes
-            for(var i = 0; list[i]; i++) {
-                const match = old.find((element) => { 
-                    if(element == list[i]) {
-                        if(this.debugMode)
-                            console.log(element + "==" + list[i]);
-
-                        return true;
-                    }
-                    return false;
-                });
-
-                if(match !== undefined) {
-                    if(this.debugMode)
-                        console.log('OLD');
-                } else {
-                    if(this.debugMode)
-                        console.log('NEW Title: ' + list[i]);
-
-                    this.titles.push({
-                        name: list[i],
-                        season: 1
-                    });
-                }
-            }
-        } else {
-            this.titles = list.map((title) => {
-                return { name: title, season: 1 };
-            });
-        }
-        
-        if(this.debugMode) {
-            console.log('New Entries:');
-            console.log(this.titles);
-        }
-
-        // Season Identifier
-        this.titles.forEach((title) => {
-            if(/S[0-9]/.test(title.name)) {
-                title.name = title.name.substring(0, title.name.length - 3);
-                title.season = Number.parseInt(title.name.substr(title.name.length - 1));
-            }
-        });
-        
     }
 
     public async getTitle(title: string) {
