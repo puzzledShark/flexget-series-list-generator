@@ -1,5 +1,6 @@
 interface profile {
     flexgetSavePath: string;
+    flexgetTab: string;
     appConfig: appConfig;
 }
 

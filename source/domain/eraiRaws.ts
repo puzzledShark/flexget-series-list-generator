@@ -1,8 +1,8 @@
-import nightmare from 'nightmare';
+import * as Nightmare from 'nightmare';
 import domain from './domain';
 
-import * as config from '../config/default.json';
 import * as translation from '../resources/en.json';
+import { nightmareConfig } from '../interfaces/nightmare-interfaces';
 
 class erairaws extends domain {
     url = "https://www.erai-raws.info/schedule/";
@@ -11,7 +11,11 @@ class erairaws extends domain {
         super(getAll, debugMode);
     }
 
-    public render(nightmare: nightmare) {
+    public render(nightConfig: nightmareConfig) {
+        if(!this.getAll)
+            nightConfig.show = true;
+
+		const nightmare = new Nightmare(nightConfig);
         let showList: HTMLCollectionOf<Element> = undefined;
         const showListText: string[] = [];
 
@@ -31,6 +35,7 @@ class erairaws extends domain {
                 }));
         } else {
             return (nightmare
+                .viewport(800, 1000)
                 .goto(this.url)
                 .wait('#main')
                 .evaluate(() => {
@@ -45,7 +50,7 @@ class erairaws extends domain {
                         document.getElementsByClassName('cccccc')[i].prepend(tmp);
                     }
                     
-                    var button = document.createElement('button');
+                    const button = document.createElement('button');
                     button.type = "button";
                     button.onclick = function() {
                         document.getElementsByClassName('entry-title')[0].id = 'nextStep';

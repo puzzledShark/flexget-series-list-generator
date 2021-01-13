@@ -1,8 +1,7 @@
 const Nightmare = require('nightmare');
 
-//TODO import { sanitize } from 'sanitize-filename-ts';
 import parser from './parser';
-import { show, parserResponse } from '../interfaces/show';
+import { parserResponse } from '../interfaces/show';
 
 import { nightmareConfig, nightmareError } from '../interfaces/nightmare-interfaces';
 
@@ -21,10 +20,11 @@ class tvdbnightmare extends parser {
     public async getTitle(title: string) {
 		if(this.nightmareConfig) {
 			const nightmare = Nightmare(this.nightmareConfig);
+			const searchurl = this.url + encodeURI(title);
 
 			return nightmare
 			.viewport(800, 1000)
-			.goto(this.url + encodeURI(title))
+			.goto(searchurl)
 			.wait('div#searchbox')
 			.wait(1000)
 			.evaluate(function() {
@@ -44,7 +44,7 @@ class tvdbnightmare extends parser {
 					}
 				} else {
 					if(this.debugMode) {
-						console.log('[#??????]	' + title);
+						console.log('[#------]	' + title);
 					}
 
 					// Fallback Search (MAL?)
@@ -58,8 +58,8 @@ class tvdbnightmare extends parser {
 				if(this.debugMode) {
 					if(error) {
 						if(this.debugMode) {
-							console.log('[#ERROR]	' + title);
-							console.log(error.message);
+							console.log('[#ERROR]	' + title + error.message);
+							console.log('Attempted URL: ' + searchurl);
 						}
 					}
 				}

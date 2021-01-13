@@ -1,5 +1,4 @@
-import nightmare from 'nightmare';
-import config from '../config/default.json';
+import { nightmareConfig } from '../interfaces/nightmare-interfaces';
 
 
 class domain {
@@ -14,10 +13,10 @@ class domain {
 
     /**
      * 
-     * @param nightmare 
+     * @param nightConfig 
      */
-    render(nightmare: nightmare) {
-        return nightmare;
+    render(nightConfig: nightmareConfig) {
+        return undefined;
     }
 }
 

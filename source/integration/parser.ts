@@ -124,7 +124,7 @@ class parser {
         const result = await this.getTitle(title.domainName);
         
         if(result) {
-            title.pathName = sanitize(result.title);
+            title.pathName = sanitize(result.title).replace("'", "");
             title.response = {
                 id: result.id,
                 title: result.title

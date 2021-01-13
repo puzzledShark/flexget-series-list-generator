@@ -2,8 +2,9 @@
     "profiles": [
         {
             "flexgetSavePath" : "W:\\Video\\Anime [Current]",
+            "flexgetTab": "      ",
             "appConfig": {    
-                "oldOutput": "./loaded.json",
+                "oldOutput": "Loaded.json",
                 "fileNameOutput": "ForFlexGet.txt"
             }
         }
