@@ -42,13 +42,14 @@ var loadAllAnime = function() {
 	})
 	GUI
 		.viewport(800, 1000)
-		.goto('https://www.erai-raws.info/schedule/')
-		.wait('#main')
+		.goto('https://subsplease.org/schedule/')
+		.wait('#full-schedule-table')
+		.wait('.all-schedule-show')
 		.evaluate(function() {
-			var showlist = document.getElementsByClassName('cccccc');
+			var showlist = document.getElementsByClassName('all-schedule-show');
 			var showlisttext = [];
 			for(var i = 0; showlist[i]; i++) {
-				showlisttext.push(showlist[i].nextElementSibling.innerText)
+				showlisttext.push(showlist[i].firstChild.innerText)
 			}
 			return showlisttext;
 		})
