@@ -2,8 +2,6 @@
  Generates series information for flexget from horrible and tvdb
 
 TODO
-- Performance issue when performing asynchronous for searching title (parser.js)
-- Season Identifier should be moved to the domain
-- Fix issue with LoadChecked mode for selecting specific titles.
-- Add Subsplease Domain
+- Investigate possible reruns for tvdb scraping.
+- Season Identifier should be moved to the domain (May consider removing functionality due to possible inconsistensies)
 - Move Labelling to resources

@@ -1,4 +1,3 @@
-import Nightmare from "nightmare";
 import { sanitize } from "sanitize-filename-ts";
 import { show, parserResponse } from "../interfaces/show";
 
@@ -6,10 +5,12 @@ class parser {
     debugMode: boolean = false;
     titles: show[] = [];
     callbackClass?: parser;
+	concurrentNightmares: number;
 
-    constructor(debugMode?: boolean, callbackClass?: parser) {
+    constructor(debugMode?: boolean, callbackClass?: parser, concurrentSearches: number = 5) {
         this.debugMode = debugMode;
         this.callbackClass = callbackClass;
+		this.concurrentNightmares = concurrentSearches;
     }
 
     /**
@@ -65,8 +66,8 @@ class parser {
         // Season Identifier
         this.titles.forEach((title) => {
             if(/S[0-9]/.test(title.domainName)) {
-                title.domainName = title.domainName.substring(0, title.domainName.length - 3);
                 title.season = Number.parseInt(title.domainName.substr(title.domainName.length - 1));
+                title.domainName = title.domainName.substring(0, title.domainName.length - 3);
             }
         });
         
@@ -104,6 +105,14 @@ class parser {
                 console.log('Parsing:');
                 console.log(this.titles);
             }
+
+            const requests = this.titles.map((title) => {
+                return () => this.searchTitle(title);
+            });
+
+            while (requests.length) {
+                await Promise.all(requests.splice(0, this.concurrentNightmares).map(f => f()) )
+            }
             
             Promise.all(this.titles.map((title) => {
                 return this.searchTitle(title);
@@ -124,7 +133,7 @@ class parser {
         const result = await this.getTitle(title.domainName);
         
         if(result) {
-            title.pathName = sanitize(result.title).replace("'", "");
+            title.pathName = sanitize(result.title).replace("'", "").replace(":", "");
             title.response = {
                 id: result.id,
                 title: result.title

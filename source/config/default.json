@@ -3,6 +3,7 @@
         {
             "flexgetSavePath" : "W:\\Video\\Anime [Current]",
             "flexgetTab": "      ",
+            "concurrentSearches" : 5,
             "appConfig": {    
                 "oldOutput": "Loaded.json",
                 "fileNameOutput": "ForFlexGet.txt"

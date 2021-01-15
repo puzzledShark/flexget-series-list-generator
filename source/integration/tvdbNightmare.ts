@@ -8,13 +8,14 @@ import { nightmareConfig, nightmareError } from '../interfaces/nightmare-interfa
 class tvdbnightmare extends parser {
 	callbackClass?: parser;
 	nightmareConfig?: nightmareConfig;
+	concurrentNightmares: number;
 
 	url: string = "https://thetvdb.com/search?menu%5Btype%5D=TV&query=";
 
-    constructor(debugMode?: boolean, nightConfig?: nightmareConfig, callbackClass?: parser) {
+    constructor(debugMode?: boolean, nightConfig?: nightmareConfig, callbackClass?: parser, concurrentSearches: number = 5) {
         super(debugMode, callbackClass);
 	
-        this.nightmareConfig = nightConfig;
+		this.nightmareConfig = nightConfig;
     }
     
     public async getTitle(title: string) {
@@ -36,6 +37,7 @@ class tvdbnightmare extends parser {
                 }
 				return undefined;
 			})
+			.end()
 			.then(async (result?: parserResponse) => {
 
 				if(result) {

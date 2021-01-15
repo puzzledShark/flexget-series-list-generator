@@ -1,4 +1,5 @@
 {
     "buttonSelectionText" : "Press this button when selection is complete",
-    "startText": "Started Flexget Generator"
+    "startText": "Started Flexget Generator",
+    "errorNotSupported": "Not Supported"
 }

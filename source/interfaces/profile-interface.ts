@@ -2,6 +2,7 @@ interface profile {
     flexgetSavePath: string;
     flexgetTab: string;
     appConfig: appConfig;
+    concurrentSearches: number;
 }
 
 interface appConfig {

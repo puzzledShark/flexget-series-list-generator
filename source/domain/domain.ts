@@ -4,10 +4,8 @@ import { nightmareConfig } from '../interfaces/nightmare-interfaces';
 class domain {
     url: string = "";
     debugMode: boolean = false;
-    getAll: boolean = false;
 
-    constructor(getAll?: boolean, debugMode?: boolean) {
-        this.getAll = getAll;
+    constructor(debugMode?: boolean) {
         this.debugMode = debugMode;
     }
 

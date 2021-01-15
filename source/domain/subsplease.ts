@@ -3,8 +3,8 @@ import domain from './domain';
 import * as translation from '../resources/en.json';
 import { nightmareConfig } from '../interfaces/nightmare-interfaces';
 
-class erairaws extends domain {
-    url = "https://www.erai-raws.info/schedule/";
+class subsplease extends domain {
+    url = 'https://subsplease.org/schedule/';
 
     constructor(debugMode?: boolean) {
         super(debugMode);
@@ -13,18 +13,18 @@ class erairaws extends domain {
     public render(nightConfig: nightmareConfig) {
 		const nightmare = new Nightmare(nightConfig);
         let showList: HTMLCollectionOf<Element> = undefined;
-        const showListText: string[] = [];
 
         return (nightmare
             .viewport(800, 1000)
             .goto(this.url)
-            .wait('#main')
+            .wait('#full-schedule-table')
+            .wait('.all-schedule-show')
             .evaluate(() => {
-                showList = document.getElementsByClassName('cccccc');
-                var showListText: string[] = [];
+                const showListText: string[] = [];
+                showList = document.getElementsByClassName('all-schedule-show');
         
                 for(var i = 0; showList[i]; i++) {
-                    showListText.push(showList[i].nextElementSibling.textContent.replace(/[\n\r]+|[\s]{2,}/g, ''));
+                    showListText.push(showList[i].firstChild.textContent)
                 }
                 return showListText;
             })
@@ -32,4 +32,4 @@ class erairaws extends domain {
     }
 }
 
-export default erairaws;
+export default subsplease;

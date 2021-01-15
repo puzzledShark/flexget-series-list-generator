@@ -34,7 +34,7 @@ class outputManager {
 
     public getAsFlexget(show: show) {
         if(show.response) {
-            const fullTitle = show.domainName + (show.season != 1 ? ' S' + show.season : "'");
+            const fullTitle = show.domainName + (show.season != 1 ? ' S' + show.season : "") + "'";
 
             let returnString = "";
             returnString += this.profile.flexgetTab + "- '" + fullTitle + ":\n";
