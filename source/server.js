@@ -31,7 +31,7 @@ var loadAllAnime = function() {
 
 	//Setting Values for Nightmare instance, since this run takes in all anime, it does not need to show it to the user for input
 	GUI = Nightmare({
-		show: false,
+		show: true,
 		typeInterval: 20,
 		alwaysOnTop: false,
 		title: 'CXP Toolkit',
@@ -193,7 +193,17 @@ var parseLoadedAnime = function(list) {
 		for(var i = 0; newAnime[i]; i++) {
 			cloneNewAnime.push(newAnime[i]);
 		}
-		tvDBNightmareSearch(newAnime);
+		GUI
+			.viewport(800, 1000)
+			.goto('https://thetvdb.com/')
+			.wait('#page-home > div.searchbar > div > form > div > div > span > button')
+			.click('#page-home > div.searchbar > div > form > div > div > span > button')
+			.wait(1000)
+			.wait('div#searchbox')
+			.then(function() {
+				tvDBNightmareSearch(newAnime);
+			})
+		
 	}
 	else {
 		console.log('No New Anime')
@@ -205,9 +215,8 @@ var parseLoadedAnime = function(list) {
 var tvDBNightmareSearch = function(ijpnUrlList) {
 	if(ijpnUrlList[0]) {
 		GUI
-		.viewport(800, 1000)
-		.goto('https://thetvdb.com/search?menu%5Btype%5D=TV&query=' + encodeURI(ijpnUrlList[0]) )
-		.wait('div#searchbox')
+		.type('#searchbox > div > form > input', '')
+		.type('#searchbox > div > form > input', ijpnUrlList[0])
 		.wait(1000)
 		.evaluate(function() {
 			var retval = [];
