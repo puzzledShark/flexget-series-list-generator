@@ -1,7 +1,7 @@
 {
     "profiles": [
         {
-            "flexgetSavePath" : "W:\\Video\\Anime [Current]",
+            "flexgetSavePath" : "Q:\\Video\\Anime [Current]",
             "flexgetTab": "      ",
             "concurrentSearches" : 5,
             "appConfig": {    

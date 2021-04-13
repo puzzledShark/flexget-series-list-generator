@@ -45,7 +45,7 @@ const parseArgs = () => {
 			if(domainGroup) {
 				domainGroup.render(nightConfig)
 					.then((list: string[]) => {
-						processTitle(list, oldData.map((i) => i.domainName));
+						processTitle(list, oldData.filter((i) => i.response).map((i) => i.domainName));
 					})
 					.catch((error: string) => {
 						console.error('Domain render failed due to: ', error);

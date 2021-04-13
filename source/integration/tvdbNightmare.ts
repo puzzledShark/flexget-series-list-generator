@@ -10,7 +10,7 @@ class tvdbnightmare extends parser {
 	nightmareConfig?: nightmareConfig;
 	concurrentNightmares: number;
 
-	url: string = "https://thetvdb.com/search?menu%5Btype%5D=TV&query=";
+	url: string = "https://thetvdb.com/";
 
     constructor(debugMode?: boolean, nightConfig?: nightmareConfig, callbackClass?: parser, concurrentSearches: number = 5) {
         super(debugMode, callbackClass);
@@ -21,13 +21,17 @@ class tvdbnightmare extends parser {
     public async getTitle(title: string) {
 		if(this.nightmareConfig) {
 			const nightmare = Nightmare(this.nightmareConfig);
-			const searchurl = this.url + encodeURI(title);
-
+			
 			return nightmare
 			.viewport(800, 1000)
-			.goto(searchurl)
-			.wait('div#searchbox')
+			.goto(this.url)
+			.wait('#page-home > div.searchbar > div > form > div > div > span > button')
+			.click('#page-home > div.searchbar > div > form > div > div > span > button')
 			.wait(1000)
+			.wait('div#searchbox')
+			.type('#searchbox > div > form > input', '')
+			.type('#searchbox > div > form > input', title)
+			.wait(1000 + (title.length * 30))
 			.evaluate(function() {
 				if(document.getElementsByTagName("ol")[0]) {
 					return {
@@ -61,7 +65,6 @@ class tvdbnightmare extends parser {
 					if(error) {
 						if(this.debugMode) {
 							console.log('[#ERROR]	' + title + error.message);
-							console.log('Attempted URL: ' + searchurl);
 						}
 					}
 				}
