@@ -1,0 +1,19 @@
+{
+    "profiles": [
+        {
+            "flexgetSavePath" : "Q:\\Video\\Anime [Current]",
+            "flexgetTab": "      ",
+            "concurrentSearches" : 5,
+            "appConfig": {    
+                "oldOutput": "Loaded.json",
+                "fileNameOutput": "ForFlexGet.txt"
+            }
+        }
+    ],
+    "key" : [
+        {
+            "name" : "tvdb",
+            "value" : ""
+        }
+    ]
+}
